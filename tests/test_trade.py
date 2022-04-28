@@ -1,6 +1,6 @@
 
 
-import asyncic
+import asyncio
 from terminal.client import MTClient
 from terminal.trade import *
 from timeit import default_timer as timer
