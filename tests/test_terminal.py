@@ -1,13 +1,13 @@
-from terminal import __version__
+from mt5_adapter import __version__
 
-from terminal.config import main_terminal_path, terminal_paths
+from mt5_adapter.config import main_terminal_path, terminal_paths
 
-from terminal.client import MTClient
+from mt5_adapter.client import MTClient
 
-from terminal.trade import *
+from mt5_adapter.trade import *
 import asyncio
 
-from terminal.wrappers import timing
+from mt5_adapter.wrappers import timing
 
 
 terminal_workers: MTClient = []

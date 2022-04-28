@@ -1,12 +1,12 @@
 
 
 import asyncio
-from terminal.client import MTClient
-from terminal.trade import *
+from mt5_adapter.client import MTClient
+from mt5_adapter.trade import *
 from timeit import default_timer as timer
-from terminal.model import TradeRequest
-from terminal.wrappers import timing
-from terminal.log import my_logger
+from mt5_adapter.model import TradeRequest
+from mt5_adapter.wrappers import timing
+from mt5_adapter.log import my_logger
 
 symbol = "EURUSD"
 

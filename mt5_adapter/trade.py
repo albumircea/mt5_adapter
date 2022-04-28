@@ -1,10 +1,10 @@
 
 import time
-from terminal.client import MTClient
-from terminal.model import TradeRequest
-from terminal.constant import ORDER_TYPE, TRADE_ACTION, POSITION_TYPE, TRADE_RETCODE
-from terminal.config import splippage, retries_counter
-from terminal.log import my_logger, LogJson
+from mt5_adapter.client import MTClient
+from mt5_adapter.model import TradeRequest
+from mt5_adapter.constant import ORDER_TYPE, TRADE_ACTION, POSITION_TYPE, TRADE_RETCODE
+from mt5_adapter.config import splippage, retries_counter
+from mt5_adapter.log import my_logger, LogJson
 
 
 async def position_get_by_ticket(metatrader: MTClient, ticket: int):

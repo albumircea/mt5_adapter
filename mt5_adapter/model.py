@@ -2,7 +2,7 @@
 from typing import Tuple
 import pydantic
 import datetime
-from terminal.log import my_logger
+from mt5_adapter.log import my_logger
 
 
 class Base(pydantic.BaseModel):

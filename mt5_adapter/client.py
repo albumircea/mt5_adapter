@@ -1,8 +1,8 @@
 import asyncio
 import concurrent.futures
 import MetaTrader5 as _mt5
-from terminal.utils import *
-from terminal.wrappers import timing
+from mt5_adapter.utils import *
+from mt5_adapter.wrappers import timing
 
 class MTClient:
 

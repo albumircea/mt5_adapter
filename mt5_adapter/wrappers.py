@@ -4,7 +4,7 @@
 
 from functools import wraps
 from timeit import default_timer as timer
-from terminal.log import my_logger
+from mt5_adapter.log import my_logger
 
 def timing(coro):
     @wraps(coro)
