@@ -1,8 +1,8 @@
 [tool.poetry]
-name = "terminal"
+name = "mt5_adapter"
 version = "0.1.0"
 description = ""
-authors = ["Your Name <you@example.com>"]
+authors = ["Albu Mircea <albu.mirceav@gmail.com>"]
 
 [tool.poetry.dependencies]
 python = "^3.10"
@@ -14,9 +14,6 @@ pydantic = "^1.9.0"
 [tool.poetry.dev-dependencies]
 pytest = "^5.2"
 autopep8 = "^1.6.0"
-flake8 = "^4.0.1"
-pylint = "^2.13.7"
-black = {version = "^22.3.0", allow-prereleases = true}
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
