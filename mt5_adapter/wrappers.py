@@ -15,3 +15,8 @@ def timing(coro):
         my_logger.info(f" {coro.__name__} took {end - start:.5} seconds to run")
         return result
     return wrapper
+
+
+
+
+

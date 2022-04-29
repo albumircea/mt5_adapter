@@ -39,7 +39,7 @@ async def order_send(metatrader: MTClient, request: TradeRequest):
                         },
                 'call_signature': dict(function=metatrader.order_send.__name__, kwargs=request.dict)
             }))
-        raise
+
     return response
 
 

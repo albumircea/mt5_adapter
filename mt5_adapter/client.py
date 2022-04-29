@@ -10,9 +10,9 @@ class MTClient:
         self.loop = loop or asyncio.get_running_loop()
         self.executor = concurrent.futures.ThreadPoolExecutor()
 
-    async def initialize(self, path: str = None, login: str = None, password: str = None, server: str = None, portable: bool = False, timeout: int = None,) -> bool:
-        args = reduce_args(locals().copy())
-        return await self.loop.run_in_executor(self.executor, lambda: _mt5.initialize(**args))
+    async def initialize(self, path: str = None, login: str = None, password: str = None, server: str = None, portable: bool = False, timeout: int = None):
+        kwargs = reduce_args(locals().copy())
+        return await self.loop.run_in_executor(self.executor, lambda: _mt5.initialize(**kwargs))
 
     async def shutdown(self) -> None:
         return await self.loop.run_in_executor(self.executor, lambda: _mt5.shutdown())
@@ -64,3 +64,10 @@ class MTClient:
 
     async def position_get_by_ticket(self, ticket: int):
         return await self.loop.run_in_executor(self.executor, lambda: _mt5.positions_get(ticket=ticket))
+
+    async def version(self):
+        return await self.loop.run_in_executor(self.executor, lambda: _mt5.version())
+
+    async def login(self,login:int,password:str,server:str=None,timeout:int=None):
+        kwargs = reduce_args(locals().copy())
+        return await self.loop.run_in_executor(self.executor, lambda: _mt5.login(**kwargs))

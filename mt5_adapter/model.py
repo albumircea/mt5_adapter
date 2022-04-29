@@ -11,9 +11,6 @@ class Base(pydantic.BaseModel):
             datetime.datetime: lambda dt: dt.isoformat(),
         }
 
-    def pack(self):
-        return dict(self)
-
     def get_dict(self):
         dic = {}
         for k in self.__dict__.keys():
@@ -23,7 +20,6 @@ class Base(pydantic.BaseModel):
         return dic
 
     def map_attributes_from_mt_object(self, mt_object: Tuple):
-        my_logger.info(f"mt_object: {mt_object}")
         for k in self.__dict__.keys():
             v = getattr(mt_object, k)
             if v is not None:
@@ -75,7 +71,7 @@ class TradeCheckResult(Base):
     comment: float = None
 
 
-class Tick(Base):
+class MTTick(Base):
     ask: float = None
     bid: float = None
     flags: int = None
@@ -85,7 +81,7 @@ class Tick(Base):
     volume_real: float = None
 
 
-class SymbolInfo(Base):
+class MTSymbol(Base):
     ask: float = None
     bid: float = None
     spread: int = None
@@ -102,14 +98,10 @@ class SymbolInfo(Base):
     category: str = None
     name: str = None
 
-    # def map_attributes_from_mt_object(self, mt_object: Tuple):
-    #     for k in self.__dict__.keys():
-    #         v = getattr(mt_object, k)
-    #         if v is not None:
-    #             setattr(self, k, v)
 
 
-class Order(Base):
+
+class MTOrder(Base):
     magic: int = None
     ticket: int = None
     symbol: str = None
@@ -123,14 +115,8 @@ class Order(Base):
     type_filling: int = None
     state: int = None
 
-    def map_attributes_from_mt_object(self, mt_object: Tuple):
-        for k in self.__dict__.keys():
-            v = getattr(mt_object, k)
-            if v is not None:
-                setattr(self, k, v)
 
-
-class Deal(Base):
+class MTDeal(Base):
     magic: int = None
     state: int = None
     order: int = None
@@ -148,14 +134,9 @@ class Deal(Base):
     symbol: str = None
     comment: str = None
 
-    def map_attributes_from_mt_object(self, mt_object: Tuple):
-        for k in self.__dict__.keys():
-            v = getattr(mt_object, k)
-            if v is not None:
-                setattr(self, k, v)
 
 
-class Position(Base):
+class MTPosition(Base):
     magic: int = None
     type: int = None
     ticket: int = None
@@ -171,7 +152,7 @@ class Position(Base):
     comment: str = None
 
 
-class AccountInfo(Base):
+class MTAccount(Base):
     login: int = None
     leverage: int = None
     trade_allowed: bool = None
@@ -199,7 +180,7 @@ class AccountInfo(Base):
     company: str = None
 
 
-class TerminalInfo(Base):
+class MTTerminal(Base):
     build: int = None
     community_account: int = None
     community_connection: int = None
