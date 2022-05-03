@@ -116,7 +116,6 @@ class MTSymbol(Base):
             trade_tick_size = mt_obj.trade_tick_size,
             trade_tick_value = mt_obj.trade_tick_value,
             trade_stops_level = mt_obj.trade_stops_level,
-            trade_stops_level = mt_obj.trade_stops_level,
             volume_min = mt_obj.volume_min,
             volume_max = mt_obj.volume_max,
             name = mt_obj.name
