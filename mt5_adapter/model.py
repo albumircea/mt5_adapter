@@ -123,6 +123,7 @@ class MTSymbol(Base):
         )
 
 
+
 class MTOrder(Base):
     magic: int = None
     ticket: int = None
@@ -218,18 +219,55 @@ class MTAccount(Base):
     currency: str = None
     company: str = None
 
+    @classmethod
+    def from_mt_obj(cls, mt_obj):
+        return cls(
+            login = mt_obj.login,
+            leverage = mt_obj.leverage,
+            trade_allowed = mt_obj.trade_allowed,
+            trade_expert=mt_obj.trade_expert,
+            trade_mode = mt_obj.trade_mode,
+            limit_orders = mt_obj.limit_orders,
+            margin = mt_obj.margin,
+            margin_free = mt_obj.margin_free,
+            margin_level = mt_obj.margin_level,
+            equity = mt_obj.equity,
+            balance = mt_obj.balance,
+            profit = mt_obj.profit,
+            credit = mt_obj.credit,
+            name = mt_obj.name,
+            server = mt_obj.server,
+            currency = mt_obj.currency,
+            company = mt_obj.company,
+        )
+
+
 
 class MTTerminal(Base):
     build: int = None
-    community_account: int = None
-    community_connection: int = None
+    #community_account: int = None
+    #community_connection: int = None
     connected: int = None
     trade_allowed: int = None
     ping_last: int = None
-    retransmission: float = None
-    language: str = None
+    #retransmission: float = None
+    #language: str = None
     name: str = None
     company: str = None
     path: str = None
     data_path: str = None
     commondata_path: str = None
+
+    @classmethod
+    def from_mt_obj(cls, mt_obj):
+        return cls(
+            build = mt_obj.build,
+            connected = mt_obj.connected,
+            trade_allowed = mt_obj.trade_allowed,
+            ping_last=mt_obj.ping_last,
+            name = mt_obj.name,
+            company = mt_obj.company,
+            path = mt_obj.path,
+            data_path = mt_obj.data_path,
+            commondata_path = mt_obj.commondata_path
+        )
