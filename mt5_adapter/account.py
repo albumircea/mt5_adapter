@@ -18,6 +18,6 @@ async def get_account_info(metatrader:MTClient) -> Union[MTAccount, None]:
     info = await metatrader.account_info()
     if info:
         account_info = MTAccount()
-        account_info.map_attributes_from_mt_object(info)
+        account_info.from_mt_object(info)
         return account_info
     return None

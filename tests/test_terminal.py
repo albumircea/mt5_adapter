@@ -31,60 +31,44 @@ async def spawn_terminals():
     await main_terminal.initialize()
 
 
-async def test_buy(client: MTClient):
 
-    await open_buy(metatrader=client, symbol_name=symbol, volume=0.01, magic_number=11)
-
-
-async def test_sell(client: MTClient):
-
-    await open_sell(metatrader=client, symbol_name=symbol, volume=0.01, magic_number=22)
 
 
 async def open_n_fast(client: MTClient, n):
 
-    buys = [test_buy(client) for _ in range(n)]
+    buys = [open_buy(metatrader=client, symbol_name=symbol, volume=0.01, magic_number=123) for _ in range(n)]
 
-    sells = [test_sell(client) for _ in range(n)]
+    sells = [open_sell(metatrader=client, symbol_name=symbol, volume=0.01, magic_number=321) for _ in range(n)]
 
     await asyncio.gather(*buys, *sells)
 
 
 async def close_all_fast(client: MTClient):
-
     positions = await positions_get_all(metatrader=client, symbol=symbol)
-
     closed = [position_close(metatrader=client, ticket=position.ticket) for position in positions]
-
     await asyncio.gather(*closed)
 
 
 @timing
-async def madness():
-
+async def multiple_terminals_buys():
     n = 10
+    
+    task1 = [open_buy(metatrader=terminal_workers[0], symbol_name=symbol, volume=0.01, magic_number=123) for _ in range(n)]
 
-    # info = await terminal_list[2].account_info()
+    task2 = [open_buy(metatrader=terminal_workers[1], symbol_name=symbol, volume=0.01, magic_number=123) for _ in range(n)]
 
-    # my_logger.info(f"info = {info}")
-    return
-    task1 = [test_buy(terminal_workers[0]) for _ in range(n)]
+    task3 = [open_buy(metatrader=terminal_workers[2], symbol_name=symbol, volume=0.01, magic_number=123) for _ in range(n)]
 
-    task2 = [test_buy(terminal_workers[1]) for _ in range(n)]
+    task4 = [open_buy(metatrader=terminal_workers[3], symbol_name=symbol, volume=0.01, magic_number=123) for _ in range(n)]
 
-    task3 = [test_buy(terminal_workers[2]) for _ in range(n)]
-
-    task4 = [test_buy(terminal_workers[3]) for _ in range(n)]
-
-    task5 = [test_buy(terminal_workers[4]) for _ in range(n)]
+    task5 = [open_buy(metatrader=terminal_workers[4], symbol_name=symbol, volume=0.01, magic_number=123) for _ in range(n)]
 
     await asyncio.gather(*task1, *task2, *task3, *task4, *task5)
 
 
 async def run_tests():
     await spawn_terminals()
-
-    await madness()
+    await multiple_terminals_buys()
 
 
 if __name__ == "__main__":

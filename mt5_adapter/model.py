@@ -1,8 +1,7 @@
-
 from typing import Tuple
 import pydantic
 import datetime
-from mt5_adapter.log import my_logger
+
 
 
 class Base(pydantic.BaseModel):
@@ -19,7 +18,7 @@ class Base(pydantic.BaseModel):
                 dic[k] = v
         return dic
 
-    def map_attributes_from_mt_object(self, mt_object: Tuple):
+    def from_mt_object(self, mt_object: Tuple):
         for k in self.__dict__.keys():
             v = getattr(mt_object, k)
             if v is not None:
@@ -80,6 +79,13 @@ class MTTick(Base):
     volume: float = None
     volume_real: float = None
 
+    @classmethod
+    def from_mt_obj(cls, mt_obj):
+        return cls(
+            ask = mt_obj.ask,
+            bid = mt_obj.bid
+        )
+
 
 class MTSymbol(Base):
     ask: float = None
@@ -94,11 +100,27 @@ class MTSymbol(Base):
     trade_stops_level: int = None
     volume_min: float = None
     volume_max: float = None
-    volume_step: float = None
-    category: str = None
+    #volume_step: float = None
+    #category: str = None
     name: str = None
-
-
+    @classmethod
+    def from_mt_obj(cls, mt_obj):
+        return cls(
+            ask = mt_obj.ask,
+            bid = mt_obj.bid,
+            spread = mt_obj.spread,
+            digits=mt_obj.digits,
+            point = mt_obj.point,
+            select = mt_obj.select,
+            volume = mt_obj.volume,
+            trade_tick_size = mt_obj.trade_tick_size,
+            trade_tick_value = mt_obj.trade_tick_value,
+            trade_stops_level = mt_obj.trade_stops_level,
+            trade_stops_level = mt_obj.trade_stops_level,
+            volume_min = mt_obj.volume_min,
+            volume_max = mt_obj.volume_max,
+            name = mt_obj.name
+        )
 
 
 class MTOrder(Base):
@@ -135,7 +157,6 @@ class MTDeal(Base):
     comment: str = None
 
 
-
 class MTPosition(Base):
     magic: int = None
     type: int = None
@@ -150,6 +171,24 @@ class MTPosition(Base):
     profit: float = None
     symbol: str = None
     comment: str = None
+
+    @classmethod
+    def from_mt_obj(cls, mt_obj):
+        return cls(
+            magic = mt_obj.magic,
+            type = mt_obj.type,
+            ticket = mt_obj.ticket,
+            identifier=mt_obj.identifier,
+            reason = mt_obj.reason,
+            volume = mt_obj.volume,
+            price_open = mt_obj.price_open,
+            sl = mt_obj.sl,
+            tp = mt_obj.tp,
+            swap = mt_obj.swap,
+            profit = mt_obj.profit,
+            symbol = mt_obj.symbol,
+            comment = mt_obj.comment
+        )
 
 
 class MTAccount(Base):

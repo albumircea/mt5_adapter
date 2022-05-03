@@ -47,8 +47,6 @@ def dictify(data: Any):
     return __ify(data, ['_asdict'])
 
 
-
-
 def is_rates_array(array):
     try:
         rate = array[0]

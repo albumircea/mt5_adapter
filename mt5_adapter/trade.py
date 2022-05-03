@@ -1,12 +1,11 @@
 
+import json
 import time
 from mt5_adapter.client import MTClient
-from mt5_adapter.model import TradeRequest
+from mt5_adapter.model import MTPosition, TradeRequest
 from mt5_adapter.constant import ORDER_TYPE, TRADE_ACTION, POSITION_TYPE, TRADE_RETCODE
 from mt5_adapter.config import splippage, retries_counter
 from mt5_adapter.log import my_logger, LogJson
-
-
 
 
 async def order_send(metatrader: MTClient, request: TradeRequest):
@@ -21,22 +20,25 @@ async def order_send(metatrader: MTClient, request: TradeRequest):
                             'type': type(ex).__name__,
                             'message': str(ex),
                         },
-                'call_signature': dict(function=metatrader.order_send.__name__, kwargs=request.dict)
+                'call_signature': dict(function=metatrader.order_send.__name__, kwargs=request)
             }))
-
     return response
+
+"""
+PROCESS TRADES
+"""
+
 
 async def process_trade(metatrader: MTClient, request: TradeRequest):
 
-    response = await order_send(metatrader=metatrader, request=request)
-
+    response = await order_send(metatrader, request)
     if not response:
-        my_logger.debug(f"response: {response}")
-        pass
+        my_logger.critical(f"NO RESPONSE, possible bad request: {request}")
+        return
 
     if response.retcode == TRADE_RETCODE.DONE:
         if request.type in [ORDER_TYPE.BUY, ORDER_TYPE.SELL]:
-            position = metatrader.position_get_by_ticket(ticket=response.order)
+            position = await metatrader.position_get_by_ticket(ticket=response.order)
             return position
 
     if response.retcode in [TRADE_RETCODE.REQUOTE, TRADE_RETCODE.PRICE_OFF]:
@@ -51,36 +53,39 @@ async def process_trade(metatrader: MTClient, request: TradeRequest):
             response = await order_send(metatrader=metatrader, request=request)
             if response.retcode == TRADE_RETCODE.DONE:
                 if request.type in [ORDER_TYPE.BUY, ORDER_TYPE.SELL]:
-                    position = metatrader.position_get_by_ticket(
+                    position = await metatrader.position_get_by_ticket(
                         ticket=response.order)
                     return position
             retries += 1
             time.sleep(0.1)
+    return response
 
 
 async def process_close(metatrader: MTClient, request: TradeRequest) -> bool:
-    response = await order_send(metatrader=metatrader, request=request)
-
+    response = await order_send(metatrader, request)
     if not response:
-        my_logger.debug(f"response: {response}")
-        pass
+        my_logger.critical(f"NO RESPONSE, possible bad request: {request}")
+        return None
 
     if response.retcode == TRADE_RETCODE.DONE:
-        if request.type in [ORDER_TYPE.BUY, ORDER_TYPE.SELL]:
-            position = metatrader.position_get_by_ticket(ticket=response.order)
-            return position
-
-
+        return True
+    return False
 
 
 async def process_modify(metatrader: MTClient, request: TradeRequest) -> bool:
-    response = await order_send(metatrader=metatrader, request=request)
+    response = await order_send(metatrader, request)
 
     if not response:
-        my_logger.debug(f"response: {response}")
-        pass
+        my_logger.critical(f"NO RESPONSE, possible bad request: {request}")
+        return None
 
+    if response.retcode == TRADE_RETCODE.DONE:
+        return True
+    return False
 
+"""
+EXECUTE
+"""
 
 
 async def open_buy(
@@ -109,9 +114,10 @@ async def open_buy(
         price=symbol_info.ask,
         sl=sl_,
         tp=tp_,
-        deviation=splippage,
+        deviation=float(splippage),
         comment=comment,
     )
+
     response = await process_trade(metatrader, request)
     return response
 
@@ -187,12 +193,15 @@ async def position_modify(
             sl=sl_,
             tp=tp_
         )
-        return await process_modify(metatrader, request)
-
+    response =  await process_modify(metatrader, request)
+    return response
 
 async def position_close(metatrader: MTClient, ticket: int, to_close_volume: float = None):
+    to_close = await position_get_by_ticket(metatrader, ticket)
 
-    to_close = await position_get_by_ticket(metatrader=metatrader, ticket=ticket)
+    if to_close is None:
+        my_logger.debug(f"Position could not be selected - ticket: {ticket}")
+        return
     tick = await metatrader.symbol_info_tick(to_close.symbol)
 
     request = TradeRequest(
@@ -203,7 +212,7 @@ async def position_close(metatrader: MTClient, ticket: int, to_close_volume: flo
         volume=to_close_volume if to_close_volume is not None else to_close.volume,
         deviation=splippage,
         type=abs(1 - to_close.type % 2),
-        price=tick.ask
+        price=tick.ask if to_close.type == ORDER_TYPE.SELL else tick.bid
     )
     response = await process_close(metatrader, request)
     return response
@@ -223,11 +232,12 @@ async def position_get_by_ticket(metatrader: MTClient, ticket: int):
                         },
                 'call_signature': dict(function=metatrader.order_send.__name__, kwargs=ticket.dict)
             }))
+
     if position is not None and len(position) == 1:
         return position[0] if position else None
 
 
 async def positions_get_all(metatrader: MTClient, symbol: str = None, group: str = None, filter_magic=None):
-    if filter:
-        return [position for position in await metatrader.positions_get(symbol=symbol, group=group) if position.magic == filter_magic]
-    return [position for position in await metatrader.positions_get(symbol=symbol, group=group)]
+    if filter_magic: 
+        return [MTPosition.from_mt_obj(position) for position in await metatrader.positions_get(symbol=symbol, group=group) if position.magic == filter_magic ]
+    return [MTPosition.from_mt_obj(position) for position in await metatrader.positions_get(symbol=symbol, group=group)]

@@ -20,7 +20,7 @@ async def get_terminal_info(metatrader:MTClient)->Union[MTTerminal, None]:
     info = await metatrader.terminal_info()
     if info:
         terminal_info = MTTerminal()
-        terminal_info.map_attributes_from_mt_object(info)
+        terminal_info.from_mt_object(info)
         return terminal_info
     return None
 

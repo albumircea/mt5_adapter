@@ -23,6 +23,6 @@ async def get_tick(metatrader: MTClient, symbol: str) -> Union[MTTick, None]:
     info_tick = await metatrader.symbol_info_tick(symbol)
     if info_tick:
         tick = MTTick()
-        tick.map_attributes_from_mt_object(info_tick)
+        tick.from_mt_object(info_tick)
         return tick
     return None

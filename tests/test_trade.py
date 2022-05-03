@@ -1,6 +1,8 @@
 
 
 import asyncio
+from contextlib import closing
+from urllib import response
 from mt5_adapter.client import MTClient
 from mt5_adapter.trade import *
 from timeit import default_timer as timer
@@ -14,81 +16,77 @@ symbol = "EURUSD"
 
 
 async def test_buy(client):
-    await open_buy(metatrader=client, symbol_name=symbol, volume=0.01, magic_number=123)
-
-# @timing
-
+    buy_result = await open_buy(metatrader=client, symbol_name=symbol, volume=0.01, magic_number=123)
 
 async def test_sell(client):
-    await open_sell(metatrader=client, symbol_name=symbol, volume=0.01, magic_number=321)
+    sell_result = await open_sell(metatrader=client, symbol_name=symbol, volume=0.01, magic_number=321)
 
-
-# @timing
 async def test_modify(client):
-    await position_modify(metatrader=client, ticket=27864579, take_profit=1.0951, stop_loss=1.051)
+    modify_result = await position_modify(metatrader=client, ticket=27864579, take_profit=1.0951, stop_loss=1.051)
 
-
-@timing
-async def test_close(client):
-    await position_close(metatrader=client, ticket=27856480)
+async def test_close(client,ticket:int):
+    close_result =  await position_close(metatrader=client, ticket=ticket)
 
 
 @timing
 async def test_positions_get(client):
-    positions = await positions_get_all(metatrader=client, symbol=symbol, filter_magic=22)
-    print(len(positions))
+    positions = await positions_get_all(metatrader=client, symbol=symbol, filter_magic=123)
+    my_logger.debug(f"positions: {positions}")
 
-
-async def close_all_fast(client):
+@timing
+async def test_close_all_fast(client):
     positions = await positions_get_all(metatrader=client, symbol=symbol)
-    closed = [position_close(metatrader=client, ticket=position.ticket)
-              for position in positions]
-    await asyncio.gather(*closed)
+    closed = [position_close(metatrader=client, ticket=position.ticket) for position in positions]
+    closed = await asyncio.gather(*closed)
 
 
-async def close_all_slow(client):
+async def test_close_all_slow(client):
     positions = await positions_get_all(metatrader=client, symbol=symbol)
     for pos in positions:
         await position_close(metatrader=client, ticket=pos.ticket)
+ 
+
+@timing
+async def test_open_n_fast(client, n):
+    buys = [open_buy(metatrader=client, symbol_name=symbol, volume=0.01, magic_number=123) for _ in range(n)]
+    sells = [open_sell(metatrader=client, symbol_name=symbol, volume=0.01, magic_number=321) for _ in range(n)]
+    results = await asyncio.gather(*buys, *sells)
+    #my_logger.debug(f"results: {results}")
 
 
-async def open_n_fast(client, n):
-    buys = [test_buy(client) for _ in range(n)]
-    sells = [test_sell(client) for _ in range(n)]
-    await asyncio.gather(*buys, *sells)
-
-
-async def open_n_slow(client, n):
+@timing
+async def test_open_n_slow(client, n):
+    results = []
     for _ in range(n):
-        await test_buy(client)
-        await test_sell(client)
+        res = await test_buy(client)
+        res = await test_sell(client)
 
+    #my_logger.debug(f"results: {results}")
 
-@timing
-async def get_symbol_info_slow(client: MTClient, symbol_list):
-
-    symbol_list = await client.symbols_get("*")
-
-    symbols = [await client.symbol_info(symbol.name) for symbol in symbol_list]
-    my_logger.info(f"len symbols: {len(symbols)}")
-
-
-@timing
-async def get_symbol_info_fast(client: MTClient, symbol_list):
-    symbol_list = await client.symbols_get("*")
-    symbols = [client.symbol_info(symbol.name) for symbol in symbol_list]
-    await asyncio.gather(*symbols)
-    my_logger.info(f"len symbols: {len(symbols)}")
+async def test_position_get_by_ticket(client):
+    positions = await positions_get_all(metatrader=client, symbol=symbol)
+    results = []
+    for position in positions:
+        res = await position_get_by_ticket(client,position.ticket)
+        results.append(res)
+    #my_logger.debug(f"res: {res}")  
+    
 
 
 async def run_tests():
     client = MTClient()
     await client.initialize()
 
-    await test_positions_get(client=client)
+    #await test_close_all_fast(client)
+    #await test_position_get_by_ticket(client)
+    #await test_close(client,ticket=27928776)
+    #await test_close_all_slow(client)
+    #await test_open_n_fast(client,10)
+    #await test_open_n_fast(client,3)
+    #await test_open_n_slow(client,2)
+    await test_positions_get(client)
 
-    await close_all_fast(client)
-
+   
     await client.shutdown()
 
 
