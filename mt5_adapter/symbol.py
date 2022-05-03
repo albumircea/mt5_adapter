@@ -12,8 +12,7 @@ async def get_symbol_info(metatrader: MTClient, symbol: str) -> Union[MTSymbol, 
 
     symbol_info = await metatrader.symbol_info(symbol=symbol)
     if symbol_info:
-        symbol = MTSymbol()
-        symbol.map_attributes_from_mt_object(symbol_info)
+        symbol = MTSymbol().from_mt_obj(symbol_info)
         return symbol
     return None
 
