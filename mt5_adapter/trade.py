@@ -1,6 +1,7 @@
 
 import json
 import time
+from typing import List, Union
 from mt5_adapter.client import MTClient
 from mt5_adapter.model import MTPosition, TradeRequest
 from mt5_adapter.constant import ORDER_TYPE, TRADE_ACTION, POSITION_TYPE, TRADE_RETCODE
@@ -96,7 +97,7 @@ async def open_buy(
     take_profit: float = None,
     magic_number: int = None,
     comment: str = None
-):
+)->Union[MTPosition,None]:
     symbol_info = await metatrader.symbol_info(symbol=symbol_name)
 
     if symbol_info is not None:
@@ -130,7 +131,7 @@ async def open_sell(
     take_profit: float = None,
     magic_number: int = None,
     comment: str = None
-):
+)->Union[MTPosition,None]:
     symbol_info = await metatrader.symbol_info(symbol=symbol_name)
     if symbol_info is not None:
         volume_ = volume if volume >= symbol_info.volume_min and volume <= symbol_info.volume_max else symbol_info.volume_min if volume < symbol_info.volume_min else symbol_info.volume_max
@@ -218,7 +219,7 @@ async def position_close(metatrader: MTClient, ticket: int, to_close_volume: flo
     return response
 
 
-async def position_get_by_ticket(metatrader: MTClient, ticket: int):
+async def position_get_by_ticket(metatrader: MTClient, ticket: int)->MTPosition:
     try:
         position = await metatrader.position_get_by_ticket(ticket=ticket)
     except Exception as ex:
@@ -237,7 +238,7 @@ async def position_get_by_ticket(metatrader: MTClient, ticket: int):
         return position[0] if position else None
 
 
-async def positions_get_all(metatrader: MTClient, symbol: str = None, group: str = None, filter_magic=None):
+async def positions_get_all(metatrader: MTClient, symbol: str = None, group: str = None, filter_magic=None)->List[MTPosition]:
     if filter_magic: 
         return [MTPosition.from_mt_obj(position) for position in await metatrader.positions_get(symbol=symbol, group=group) if position.magic == filter_magic ]
     return [MTPosition.from_mt_obj(position) for position in await metatrader.positions_get(symbol=symbol, group=group)]
