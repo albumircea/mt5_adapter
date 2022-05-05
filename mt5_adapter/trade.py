@@ -36,7 +36,7 @@ async def process_trade(metatrader: MTClient, request: TradeRequest):
     if not response:
         my_logger.critical(f"NO RESPONSE, possible bad request: {request}")
         return
-
+    my_logger.info("TRADE RESPONSE : {response}")
     if response.retcode == TRADE_RETCODE.DONE:
         if request.type in [ORDER_TYPE.BUY, ORDER_TYPE.SELL]:
             position = MTPosition.from_mt_obj(await position_get_by_ticket(metatrader=metatrader, ticket=response.order))
@@ -54,7 +54,7 @@ async def process_trade(metatrader: MTClient, request: TradeRequest):
             response = await order_send(metatrader=metatrader, request=request)
             if response.retcode == TRADE_RETCODE.DONE:
                 if request.type in [ORDER_TYPE.BUY, ORDER_TYPE.SELL]:
-                    position = MTPosition.from_mt_obj(await position_get_by_ticket(metatrader =metatrader, ticket=response.order))
+                    position = MTPosition.from_mt_obj(await position_get_by_ticket(metatrader=metatrader, ticket=response.order))
                     return position
             retries += 1
             time.sleep(0.1)
@@ -67,6 +67,8 @@ async def process_close(metatrader: MTClient, request: TradeRequest) -> bool:
         my_logger.critical(f"NO RESPONSE, possible bad request: {request}")
         return None
 
+    my_logger.info("CLOSE RESPONSE : {response}")
+
     if response.retcode == TRADE_RETCODE.DONE:
         return True
     return False
@@ -78,6 +80,8 @@ async def process_modify(metatrader: MTClient, request: TradeRequest) -> bool:
     if not response:
         my_logger.critical(f"NO RESPONSE, possible bad request: {request}")
         return None
+
+    my_logger.info("MODIFY RESPONSE : {response}")
 
     if response.retcode == TRADE_RETCODE.DONE:
         return True

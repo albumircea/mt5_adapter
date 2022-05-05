@@ -12,7 +12,7 @@ from mt5_adapter.wrappers import timing
 
 terminal_workers: MTClient = []
 
-symbol = "EURUSD"
+symbol = "GBPJPY"
 
 
 async def spawn_terminals():
