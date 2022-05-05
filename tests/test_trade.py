@@ -2,6 +2,7 @@
 
 import asyncio
 from contextlib import closing
+from pydoc import cli
 from urllib import response
 from mt5_adapter.client import MTClient
 from mt5_adapter.trade import *
@@ -84,7 +85,10 @@ async def run_tests():
     #await test_open_n_fast(client,10)
     #await test_open_n_fast(client,3)
     #await test_open_n_slow(client,2)
-    await test_positions_get(client)
+    #await test_positions_get(client)
+    await test_buy(client)
+    await test_sell(client)
+
 
    
     await client.shutdown()

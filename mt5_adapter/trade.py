@@ -39,7 +39,7 @@ async def process_trade(metatrader: MTClient, request: TradeRequest):
 
     if response.retcode == TRADE_RETCODE.DONE:
         if request.type in [ORDER_TYPE.BUY, ORDER_TYPE.SELL]:
-            position = await metatrader.position_get_by_ticket(ticket=response.order)
+            position = MTPosition.from_mt_obj(await metatrader.position_get_by_ticket(ticket=response.order))
             return position
 
     if response.retcode in [TRADE_RETCODE.REQUOTE, TRADE_RETCODE.PRICE_OFF]:
@@ -54,8 +54,8 @@ async def process_trade(metatrader: MTClient, request: TradeRequest):
             response = await order_send(metatrader=metatrader, request=request)
             if response.retcode == TRADE_RETCODE.DONE:
                 if request.type in [ORDER_TYPE.BUY, ORDER_TYPE.SELL]:
-                    position = await metatrader.position_get_by_ticket(
-                        ticket=response.order)
+                    position = MTPosition.from_mt_obj(await metatrader.position_get_by_ticket(
+                        ticket=response.order))
                     return position
             retries += 1
             time.sleep(0.1)
