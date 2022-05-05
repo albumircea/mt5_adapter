@@ -39,7 +39,7 @@ async def process_trade(metatrader: MTClient, request: TradeRequest):
 
     if response.retcode == TRADE_RETCODE.DONE:
         if request.type in [ORDER_TYPE.BUY, ORDER_TYPE.SELL]:
-            position = MTPosition.from_mt_obj(await metatrader.position_get_by_ticket(ticket=response.order))
+            position = MTPosition.from_mt_obj(await position_get_by_ticket(metatrader=metatrader, ticket=response.order))
             return position
 
     if response.retcode in [TRADE_RETCODE.REQUOTE, TRADE_RETCODE.PRICE_OFF]:
@@ -54,8 +54,7 @@ async def process_trade(metatrader: MTClient, request: TradeRequest):
             response = await order_send(metatrader=metatrader, request=request)
             if response.retcode == TRADE_RETCODE.DONE:
                 if request.type in [ORDER_TYPE.BUY, ORDER_TYPE.SELL]:
-                    position = MTPosition.from_mt_obj(await metatrader.position_get_by_ticket(
-                        ticket=response.order))
+                    position = MTPosition.from_mt_obj(await position_get_by_ticket(metatrader =metatrader, ticket=response.order))
                     return position
             retries += 1
             time.sleep(0.1)
@@ -97,7 +96,7 @@ async def open_buy(
     take_profit: float = None,
     magic_number: int = None,
     comment: str = None
-)->Union[MTPosition,None]:
+) -> Union[MTPosition, None]:
     symbol_info = await metatrader.symbol_info(symbol=symbol_name)
 
     if symbol_info is not None:
@@ -131,7 +130,7 @@ async def open_sell(
     take_profit: float = None,
     magic_number: int = None,
     comment: str = None
-)->Union[MTPosition,None]:
+) -> Union[MTPosition, None]:
     symbol_info = await metatrader.symbol_info(symbol=symbol_name)
     if symbol_info is not None:
         volume_ = volume if volume >= symbol_info.volume_min and volume <= symbol_info.volume_max else symbol_info.volume_min if volume < symbol_info.volume_min else symbol_info.volume_max
@@ -194,8 +193,9 @@ async def position_modify(
             sl=sl_,
             tp=tp_
         )
-    response =  await process_modify(metatrader, request)
+    response = await process_modify(metatrader, request)
     return response
+
 
 async def position_close(metatrader: MTClient, ticket: int, to_close_volume: float = None):
     to_close = await position_get_by_ticket(metatrader, ticket)
@@ -219,7 +219,7 @@ async def position_close(metatrader: MTClient, ticket: int, to_close_volume: flo
     return response
 
 
-async def position_get_by_ticket(metatrader: MTClient, ticket: int)->MTPosition:
+async def position_get_by_ticket(metatrader: MTClient, ticket: int) -> MTPosition:
     try:
         position = await metatrader.position_get_by_ticket(ticket=ticket)
     except Exception as ex:
@@ -238,7 +238,7 @@ async def position_get_by_ticket(metatrader: MTClient, ticket: int)->MTPosition:
         return position[0] if position else None
 
 
-async def positions_get_all(metatrader: MTClient, symbol: str = None, group: str = None, filter_magic=None)->List[MTPosition]:
-    if filter_magic: 
-        return [MTPosition.from_mt_obj(position) for position in await metatrader.positions_get(symbol=symbol, group=group) if position.magic == filter_magic ]
+async def positions_get_all(metatrader: MTClient, symbol: str = None, group: str = None, filter_magic=None) -> List[MTPosition]:
+    if filter_magic:
+        return [MTPosition.from_mt_obj(position) for position in await metatrader.positions_get(symbol=symbol, group=group) if position.magic == filter_magic]
     return [MTPosition.from_mt_obj(position) for position in await metatrader.positions_get(symbol=symbol, group=group)]

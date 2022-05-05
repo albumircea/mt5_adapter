@@ -18,6 +18,7 @@ symbol = "EURUSD"
 
 async def test_buy(client):
     buy_result = await open_buy(metatrader=client, symbol_name=symbol, volume=0.01, magic_number=123)
+    #my_logger.debug(f"buy_result: {buy_result}")
 
 async def test_sell(client):
     sell_result = await open_sell(metatrader=client, symbol_name=symbol, volume=0.01, magic_number=321)
@@ -87,7 +88,7 @@ async def run_tests():
     #await test_open_n_slow(client,2)
     #await test_positions_get(client)
     await test_buy(client)
-    await test_sell(client)
+   # await test_sell(client)
 
 
    
