@@ -31,18 +31,19 @@ PROCESS TRADES
 
 
 async def process_trade(metatrader: MTClient, request: TradeRequest):
+    """ TODO error handling """
 
     response = await order_send(metatrader, request)
     if not response:
         my_logger.critical(f"NO RESPONSE, possible bad request: {request}")
         return
-    my_logger.info(f"TRADE RESPONSE : {response}")
+
     if response.retcode == TRADE_RETCODE.DONE:
         if request.type in [ORDER_TYPE.BUY, ORDER_TYPE.SELL]:
             position = MTPosition.from_mt_obj(await position_get_by_ticket(metatrader=metatrader, ticket=response.order))
             return position
 
-    if response.retcode in [TRADE_RETCODE.REQUOTE, TRADE_RETCODE.PRICE_OFF]:
+    elif response.retcode in [TRADE_RETCODE.REQUOTE, TRADE_RETCODE.PRICE_OFF]:
         retries = 1
         while retries < retries_counter:
             tick = await metatrader.symbol_info_tick(request.symbol)
@@ -58,19 +59,27 @@ async def process_trade(metatrader: MTClient, request: TradeRequest):
                     return position
             retries += 1
             time.sleep(0.1)
-    return response
+    
+    else:
+        my_logger.critical(f"PROCESS TRADE: {request}")
+        return response
+
 
 
 async def process_close(metatrader: MTClient, request: TradeRequest) -> bool:
+    """TODO error handling"""
     response = await order_send(metatrader, request)
     if not response:
         my_logger.critical(f"NO RESPONSE, possible bad request: {request}")
         return None
 
-    my_logger.info(f"CLOSE RESPONSE : {response}")
+    if response.retcode != TRADE_RETCODE.DONE:
+        my_logger.critical(f"CLOSE RESPONSE : {response}")
+        return False
 
     if response.retcode == TRADE_RETCODE.DONE:
         return True
+        
     return False
 
 

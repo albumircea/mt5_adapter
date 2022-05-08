@@ -3,7 +3,7 @@ import concurrent.futures
 import MetaTrader5 as _mt5
 from mt5_adapter.utils import *
 from mt5_adapter.wrappers import timing
-
+from datetime import datetime
 class MTClient:
 
     def __init__(self, loop=None):
@@ -71,3 +71,25 @@ class MTClient:
     async def login(self,login:int,password:str,server:str=None,timeout:int=None):
         kwargs = reduce_args(locals().copy())
         return await self.loop.run_in_executor(self.executor, lambda: _mt5.login(**kwargs))
+
+
+    ###
+    async def history_orders_total(self,date_from=None,date_to=None):
+        return await self.loop.run_in_executor(self.executor,lambda: _mt5.history_orders_total(date_from,date_to))
+
+    async def history_deals_total(self,date_from,date_to):
+        return await self.loop.run_in_executor(self.executor,lambda: _mt5.history_deals_total(date_from,date_to))
+
+    ###
+    async def history_deals_get_by_date(self,date_from,date_to,group):
+        return await self.loop.run_in_executor(self.executor,lambda: _mt5.history_deals_get(date_from,date_to,group=group))
+
+    async def history_orders_get_by_date(self,date_from,date_to,group):
+        return await self.loop.run_in_executor(self.executor,lambda: _mt5.history_orders_get(date_from,date_to,group=group))
+
+    ###
+    async def history_order_get_by_ticket(self,ticket):
+        return await self.loop.run_in_executor(self.executor,lambda: _mt5.history_orders_get(position=ticket))
+
+    async def history_deal_get_by_ticket(self,ticket):
+        return await self.loop.run_in_executor(self.executor,lambda: _mt5.history_deals_get(position=ticket))

@@ -32,8 +32,11 @@ async def test_close(client,ticket:int):
 
 @timing
 async def test_positions_get(client):
-    positions = await positions_get_all(metatrader=client, symbol=symbol, filter_magic=123)
-    my_logger.debug(f"positions: {positions}")
+    positions = await positions_get_all(metatrader=client, symbol=symbol, filter_magic=1)
+    
+    json_obj = [json.loads(pos.json()) for pos in positions] 
+    
+    my_logger.info(json.dumps(json_obj,indent=2))
 
 @timing
 async def test_close_all_fast(client):
@@ -86,9 +89,10 @@ async def run_tests():
     #await test_open_n_fast(client,10)
     #await test_open_n_fast(client,3)
     #await test_open_n_slow(client,2)
-    #await test_positions_get(client)
-    await test_buy(client)
-   # await test_sell(client)
+    await test_positions_get(client)
+    #await test_buy(client)
+    #await test_sell(client)
+    #await test_close_all_fast(client=client)
 
 
    
