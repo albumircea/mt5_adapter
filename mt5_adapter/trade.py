@@ -10,6 +10,7 @@ from mt5_adapter.log import my_logger, LogJson
 
 
 async def order_send(metatrader: MTClient, request: TradeRequest):
+
     try:
         response = await metatrader.order_send(request.get_dict())
     except Exception as ex:

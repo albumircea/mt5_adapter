@@ -1,8 +1,8 @@
 [tool.poetry]
 name = "mt5_adapter"
-version = "0.1.14"
-description = ""
-authors = ["Albu Mircea <albu.mirceav@gmail.com>"]
+version = "0.1.15"
+description = "Wrapper over MetaTrader5 library"
+authors = ["Albu Mirceaa <albu.mirceav@gmail.com>"]
 
 [tool.poetry.dependencies]
 python = "^3.10"
