@@ -39,6 +39,7 @@ async def process_trade(metatrader: MTClient, request: TradeRequest):
         return
 
     if response.retcode == TRADE_RETCODE.DONE:
+        my_logger.info(f"TRADE RESPONSE : {response}")
         if request.type in [ORDER_TYPE.BUY, ORDER_TYPE.SELL]:
             position = MTPosition.from_mt_obj(await position_get_by_ticket(metatrader=metatrader, ticket=response.order))
             return position
