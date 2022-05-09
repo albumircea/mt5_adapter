@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "mt5_adapter"
-version = "0.1.13"
+version = "0.1.14"
 description = ""
 authors = ["Albu Mircea <albu.mirceav@gmail.com>"]
 
