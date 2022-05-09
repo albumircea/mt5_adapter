@@ -257,6 +257,7 @@ class MTClosedTrade(Base):
             profit=mt_deal[1].profit,
             swap=mt_deal[1].swap,
             commission=mt_deal[1].commission,
+            comment = mt_order[0].comment,
             volume=mt_deal[1].volume,
             magic=mt_order[0].magic,
             open_time= datetime.datetime.fromtimestamp(mt_order[0].time_setup),
