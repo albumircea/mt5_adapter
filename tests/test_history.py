@@ -14,7 +14,7 @@ async def test_closed_trade(client):
 
 
 async def test_closed_trades(client):
-    result = await get_closed_trades(client=client)
+    result = await get_closed_trades(client=client,group="EURJPY")
     my_logger.debug(f"len(result) = {len(result)}  ---  type(result) = {type(result[0])}")
 
 
@@ -31,10 +31,10 @@ async def run_tests():
     client = MTClient()
     await client.initialize()
     
-    await test_closed_trade(client)
+    #await test_closed_trade(client)
     await test_closed_trades(client)
-    await history_deals(client)
-    await history_orders(client)
+    #await history_deals(client)
+    #await history_orders(client)
 
     await client.shutdown()
 
