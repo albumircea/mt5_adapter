@@ -30,7 +30,8 @@ async def get_closed_trades(client:MTClient,date_from=datetime(2000,1,1),date_to
         if counter[id] == 2:
             tasks.append(get_closed_trade(client=client,ticket=id))
 
-    return await asyncio.gather(*tasks)
+    return  await asyncio.gather(*tasks)
+     
 
 
 

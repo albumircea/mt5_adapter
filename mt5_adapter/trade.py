@@ -40,7 +40,7 @@ async def process_trade(metatrader: MTClient, request: TradeRequest):
         return
 
     if response.retcode == TRADE_RETCODE.DONE:
-        my_logger.info(f"TRADE RESPONSE : {response}")
+        #my_logger.info(f"TRADE RESPONSE : {response}")
         if request.type in [ORDER_TYPE.BUY, ORDER_TYPE.SELL]:
             position = MTPosition.from_mt_obj(await position_get_by_ticket(metatrader=metatrader, ticket=response.order))
             return position
@@ -92,7 +92,7 @@ async def process_modify(metatrader: MTClient, request: TradeRequest) -> bool:
         my_logger.critical(f"NO RESPONSE, possible bad request: {request}")
         return None
 
-    my_logger.info(f"MODIFY RESPONSE : {response}")
+    #my_logger.info(f"MODIFY RESPONSE : {response}")
 
     if response.retcode == TRADE_RETCODE.DONE:
         return True

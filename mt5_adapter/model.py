@@ -48,7 +48,7 @@ class TradeRequest(Base):
 class TradeResult(Base):
     retcode: int = None
     deal: int = None  # Deal ticket, if it is performed
-    order: int = None  # Order ticket, if it is placed
+    order: int = None  # Order ticket, if it is placedre
     volume: float = None
     price: float = None
     bid: float = None
