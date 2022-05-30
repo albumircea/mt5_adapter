@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "mt5_adapter"
-version = "0.1.20"
+version = "0.1.21"
 description = "Wrapper over MetaTrader5 library"
 authors = ["Albu Mirceaa <albu.mirceav@gmail.com>"]
 

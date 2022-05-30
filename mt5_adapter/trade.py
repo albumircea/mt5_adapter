@@ -63,7 +63,7 @@ async def process_trade(metatrader: MTClient, request: TradeRequest):
             time.sleep(0.1)
     
     else:
-        my_logger.critical(f"PROCESS TRADE: {request}")
+        my_logger.critical(f"PROCESS TRADE: {response}")
         return response
 
 
@@ -257,3 +257,5 @@ async def positions_get_all(metatrader: MTClient, symbol: str = None, group: str
     if filter_magic:
         return [MTPosition.from_mt_obj(position) for position in await metatrader.positions_get(symbol=symbol, group=group) if position.magic == filter_magic]
     return [MTPosition.from_mt_obj(position) for position in await metatrader.positions_get(symbol=symbol, group=group)]
+
+

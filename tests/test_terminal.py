@@ -28,7 +28,7 @@ async def spawn_terminals():
     main_terminal = MTClient()
     terminal_workers.insert(0, main_terminal)
 
-    await main_terminal.initialize()
+    await main_terminal.initialize(main_terminal_path)
 
 
 
@@ -68,7 +68,7 @@ async def multiple_terminals_buys():
 
 async def run_tests():
     await spawn_terminals()
-    await multiple_terminals_buys()
+    #await multiple_terminals_buys()
 
 
 if __name__ == "__main__":

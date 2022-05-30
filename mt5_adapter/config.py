@@ -11,8 +11,7 @@ demo_account_info = {
 }
 
 
-main_terminal_path = "C:\\Program Files\\MetaTrader 5 Teletrade Termina - 1l\\terminal64.exe"
-
+main_terminal_path = "C:\\Program Files\\MetaTrader 5 Teletrade Terminal - main\\terminal64.exe"
 
 terminal_paths = [
     "C:\\Program Files\\MetaTrader 5 Teletrade Terminal\\terminal64.exe",

@@ -3,6 +3,7 @@
 import asyncio
 from contextlib import closing
 from pydoc import cli
+from turtle import position
 from urllib import response
 from mt5_adapter.client import MTClient
 from mt5_adapter.trade import *
@@ -29,6 +30,13 @@ async def test_modify(client):
 async def test_close(client,ticket:int):
     close_result =  await position_close(metatrader=client, ticket=ticket)
 
+
+async def test_modify_all(client):
+    positions = await positions_get_all(metatrader=client, symbol="EURJPY", filter_magic=32)
+    
+    for pos in positions:
+        print(pos.ticket)
+        await position_modify(metatrader=client, ticket=pos.ticket, take_profit=135.257)
 
 @timing
 async def test_positions_get(client):
@@ -89,7 +97,7 @@ async def run_tests():
     #await test_open_n_fast(client,10)
     #await test_open_n_fast(client,3)
     #await test_open_n_slow(client,2)
-    await test_positions_get(client)
+    await test_modify_all(client)
     #await test_buy(client)
     #await test_sell(client)
     #await test_close_all_fast(client=client)

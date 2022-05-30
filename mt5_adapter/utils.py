@@ -69,3 +69,8 @@ def reduce_combine(d1: dict, d2: dict):
         if v is not None:
             d1[k] = v
     return d1
+
+
+def chunks(_list, chunk_size):
+    chunk_size = max(1, chunk_size)
+    return [_list[i:i + chunk_size] for i in range(0, len(_list), chunk_size)]
