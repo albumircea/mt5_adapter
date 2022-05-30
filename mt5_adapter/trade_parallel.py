@@ -17,6 +17,7 @@ def modify_order_dict(ticket: int, stop_loss: float = None, take_profit: float =
 
 async def initialize_workers():
     global terminal_workers
+    terminal_workers = []
     for _ in range(len(terminal_paths)):
         terminal_workers.append(MTClient())
     index = 0
@@ -33,7 +34,7 @@ async def parallel_modify(function_list):
     global terminal_workers
     chunk_number = len(function_list)/len(terminal_workers)
     chunk_number = int(math.ceil(chunk_number))
-    list_chunks = chunks(function_list,len(terminal_workers))
+    list_chunks = chunks(function_list,chunk_number)
     tasks = []
     if len(terminal_workers) >= len(list_chunks):
         
@@ -42,7 +43,7 @@ async def parallel_modify(function_list):
                 tasks.append(position_modify(metatrader=_terminal,ticket=dic["ticket"], stop_loss=dic["stop_loss"],take_profit=dic["take_profit"]))
 
     else:
-        my_logger.error(f"Something went wrong")
+        my_logger.error(f"Something went wrong -- len(terminal_workers) = {len(terminal_workers)} -- len(list_chunks) = {len(list_chunks)}")
         return
 
     

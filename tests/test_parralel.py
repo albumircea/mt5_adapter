@@ -6,10 +6,10 @@ from mt5_adapter.terminal import get_terminal_info
 
 
 
-_symbol = "EURGBP"
-_magic   = 444
+_symbol = "EURUSD"
+_magic   = 412
 _metatrader:MTClient
-tp_price = 0.84
+tp_price = 1.06
 
 async def main(terminal):
     buy_orders = []
