@@ -6,7 +6,7 @@ from mt5_adapter.trade import *
 import asyncio
 
 from mt5_adapter.utils import chunks
-terminal_workers: MTClient = []
+terminal_workers: List[MTClient]
 
 def modify_order_dict(ticket: int, stop_loss: float = None, take_profit: float = None):
         return {
@@ -23,6 +23,11 @@ async def initialize_workers():
     for terminal in terminal_workers:
         await terminal.initialize(terminal_paths[index])
         index += 1
+
+async def shutdown_workers():
+    global terminal_workers
+    for terminal in terminal_workers:
+        await terminal.shutdown()
 
 async def parallel_modify(function_list):
     global terminal_workers
